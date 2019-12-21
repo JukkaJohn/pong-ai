@@ -1,12 +1,12 @@
 import pygame
 
 
-class AutomaticPlayer(pygame.sprite.Sprite):
-    def __init__(self, y_pos: int, color):
+class Player(pygame.sprite.Sprite):
+    def __init__(self, y_pos: int, width: int, color):
         # Call the parent's constructor
         super().__init__()
 
-        self.width = 75
+        self.width = width
         self.height = 15
         self.image = pygame.Surface([self.width, self.height])
         self.image.fill(color)
@@ -19,16 +19,10 @@ class AutomaticPlayer(pygame.sprite.Sprite):
         self.rect.x = (self.screenwidth - self.width) / 2
         self.rect.y = y_pos
 
-    # Update the player
-    def update(self, direction: int, ball_x: int, ball_y: int):
+    def update(self, direction: int):
         # This gets the position of the axis on the game controller
         # It returns a number between -1.0 and +1.0
-        if ball_x < self.rect.x + 37.5:
-            horiz_axis_pos = -1
-        elif ball_x > self.rect.x + 37.5:
-            horiz_axis_pos = 1
-        else:
-            horiz_axis_pos = 0
+        horiz_axis_pos = direction
 
         # Move x according to the axis. We multiply by 15 to speed up the movement.
         self.rect.x = int(self.rect.x + horiz_axis_pos * 15)

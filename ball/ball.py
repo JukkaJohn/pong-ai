@@ -5,8 +5,6 @@ import pygame
 
 
 class Ball(pygame.sprite.Sprite):
-
-    # Constructor. Pass in the color of the block, and its x and y position
     def __init__(self, color):
         # Call the parent class (Sprite) constructor
         super().__init__()

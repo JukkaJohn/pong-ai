@@ -2,20 +2,25 @@ import click
 import pygame
 
 # Define some colors
+from agent.advanced_automatic_agent import AdvancedAutomaticAgent
+from agent.automatic_agent import AutomaticAgent
+from agent.human_agent import HumanAgent
 from ball.ball import Ball
-from player.automaticplayer import AutomaticPlayer
-from player.humanplayer import HumanPlayer
+from player.player import Player
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 
 TWO_PLAYER = 'TWO_PLAYER'
 AUTOMATIC_PLAYER = 'AUTOMATIC_PLAYER'
+ADVANCED_AUTOMATIC_PLAYER = 'ADVANCED_AUTOMATIC_PLAYER'
+
+PLAYER_WIDTH = 75
 
 
 @click.command()
 @click.option('--game-type',
-              type=click.Choice([TWO_PLAYER, AUTOMATIC_PLAYER], case_sensitive=False), default='TWO_PLAYER')
+              type=click.Choice([TWO_PLAYER, AUTOMATIC_PLAYER, ADVANCED_AUTOMATIC_PLAYER], case_sensitive=False), default='TWO_PLAYER')
 def pong(game_type):
     score1 = 0
     score2 = 0
@@ -45,8 +50,9 @@ def pong(game_type):
     balls.add(ball)
 
     # Create the player paddle object
-    player1 = HumanPlayer(580, WHITE)
-    player2 = create_player(game_type)
+    player1 = Player(580, PLAYER_WIDTH, WHITE)
+    player2 = Player(25, PLAYER_WIDTH, WHITE)
+    agent = create_agent(game_type)
 
     movingsprites = pygame.sprite.Group()
     movingsprites.add(player1)
@@ -73,8 +79,9 @@ def pong(game_type):
         if not done:
             # Update the player and ball positions
             key_state = pygame.key.get_pressed()
-            player1.update(key_state[pygame.K_RIGHT] - key_state[pygame.K_LEFT], ball.x, ball.y)
-            player2.update(key_state[pygame.K_x] - key_state[pygame.K_z], ball.x, ball.y)
+            player1.update(key_state[pygame.K_RIGHT] - key_state[pygame.K_LEFT])
+            player2_direction = agent.get_direction(key_state, ball.x, ball.y, player2.rect.x)
+            player2.update(player2_direction)
             ball.update()
 
         # If we are done, print game over
@@ -131,10 +138,13 @@ def pong(game_type):
     pygame.quit()
 
 
-def create_player(game_type):
+def create_agent(game_type):
     if game_type == AUTOMATIC_PLAYER:
-        return AutomaticPlayer(25, WHITE)
-    return HumanPlayer(25, WHITE)
+        return AutomaticAgent(PLAYER_WIDTH)
+    elif game_type == ADVANCED_AUTOMATIC_PLAYER:
+        return AdvancedAutomaticAgent(PLAYER_WIDTH)
+    return HumanAgent()
+
 
 
 if __name__ == '__main__':
