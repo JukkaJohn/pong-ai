@@ -9,13 +9,14 @@ class AdvancedAutomaticAgent:
 
     def get_direction(self, key_state, ball_x, ball_y, own_player_x) -> int:
         result = None
-        if self.ball_x_previous == -1:
+        if self.ball_x_previous == -1 or ball_x == self.ball_x_previous:
             result = self.get_direction_based_on_ball_x(ball_x, own_player_x)
-
+        
         if result is None:
             if ball_y < self.ball_y_previous:
-                line_parameters = np.linalg.solve(np.array([[self.ball_x_previous, 1], [ball_x, 1]]), np.array([self.ball_y_previous, ball_y]))
-                pred_x_intersection = (25-line_parameters[1])/line_parameters[0]
+                line_parameters = np.linalg.solve(np.array([[self.ball_x_previous, 1], [ball_x, 1]]),
+                                                  np.array([self.ball_y_previous, ball_y]))
+                pred_x_intersection = (25 - line_parameters[1]) / line_parameters[0]
 
                 if pred_x_intersection > own_player_x + self.player_width / 2:
                     result = 1
@@ -30,7 +31,6 @@ class AdvancedAutomaticAgent:
                     result = 1
                 else:
                     result = 0
-
 
         self.ball_x_previous = ball_x
         self.ball_y_previous = ball_y
