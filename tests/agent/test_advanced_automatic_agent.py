@@ -49,3 +49,19 @@ def test_get_direction_remove_jitter_ball_upward():
 
     result = agent.get_direction(None, 350, 250, 536)
     assert result == 0
+
+
+def test_get_direction_bounce_against_right_wall():
+    agent = AdvancedAutomaticAgent(80)
+    agent.get_direction(None, 600, 400, 700)
+
+    result = agent.get_direction(None, 650, 350, 700)
+    assert result == -1
+
+
+def test_get_direction_bounce_against_left_wall():
+    agent = AdvancedAutomaticAgent(80)
+    agent.get_direction(None, 300, 600, 50)
+
+    result = agent.get_direction(None, 250, 550, 50)
+    assert result == 1

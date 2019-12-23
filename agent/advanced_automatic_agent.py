@@ -21,6 +21,12 @@ class AdvancedAutomaticAgent:
                 line_parameters = np.linalg.solve(np.array([[self.ball_x_previous, 1], [ball_x, 1]]),
                                                   np.array([self.ball_y_previous, ball_y]))
                 pred_x_intersection = (25 - line_parameters[1]) / line_parameters[0]
+                while pred_x_intersection < 0 or pred_x_intersection > 800:
+                    if pred_x_intersection > 800:
+                        pred_x_intersection = 800 - (pred_x_intersection - 800)
+
+                    if pred_x_intersection < 0:
+                        pred_x_intersection = -pred_x_intersection
 
                 result = self.get_direction_based_on_ball_x(pred_x_intersection, own_player_x)
             else:
