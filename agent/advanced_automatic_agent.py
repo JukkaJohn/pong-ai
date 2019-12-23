@@ -1,5 +1,7 @@
 import numpy as np
 
+JITTER_MARGIN = 15
+
 
 class AdvancedAutomaticAgent:
     def __init__(self, player_width):
@@ -11,36 +13,32 @@ class AdvancedAutomaticAgent:
         result = None
         if self.ball_x_previous == -1 or ball_x == self.ball_x_previous:
             result = self.get_direction_based_on_ball_x(ball_x, own_player_x)
-        
+
         if result is None:
+
             if ball_y < self.ball_y_previous:
+
                 line_parameters = np.linalg.solve(np.array([[self.ball_x_previous, 1], [ball_x, 1]]),
                                                   np.array([self.ball_y_previous, ball_y]))
                 pred_x_intersection = (25 - line_parameters[1]) / line_parameters[0]
 
-                if pred_x_intersection > own_player_x + self.player_width / 2:
-                    result = 1
-                elif pred_x_intersection < own_player_x + self.player_width / 2:
-                    result = -1
-                else:
-                    result = 0
+                result = self.get_direction_based_on_ball_x(pred_x_intersection, own_player_x)
             else:
-                if own_player_x + self.player_width / 2 > 400:
-                    result = -1
-                elif own_player_x + self.player_width / 2 < 400:
-                    result = 1
-                else:
-                    result = 0
+                result = self.get_direction_based_on_ball_x(400, own_player_x)
 
         self.ball_x_previous = ball_x
         self.ball_y_previous = ball_y
 
         return result
 
+    def get_middle_of_paddle(self, own_player_x) -> int:
+        return own_player_x + self.player_width / 2
+
     def get_direction_based_on_ball_x(self, ball_x, own_player_x):
+        if ball_x - self.get_middle_of_paddle(own_player_x) <= JITTER_MARGIN >= self.get_middle_of_paddle(
+                own_player_x) - ball_x:
+            return 0
         if ball_x < own_player_x + self.player_width / 2:
             return -1
-        elif ball_x > own_player_x + self.player_width / 2:
-            return 1
         else:
-            return 0
+            return 1

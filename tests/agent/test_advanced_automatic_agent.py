@@ -21,6 +21,7 @@ def test_get_direction_ball_downward():
     result = agent.get_direction(None, 400, 400, 300)
     assert result == 1
 
+
 def test_get_direction_vertical():
     agent = AdvancedAutomaticAgent(80)
     result = agent.get_direction(None, 300, 300, 400)
@@ -31,3 +32,20 @@ def test_get_direction_vertical():
 
     result = agent.get_direction(None, 300, 200, 200)
     assert result == 1
+
+
+def test_get_direction_remove_jitter_ball_downward():
+    agent = AdvancedAutomaticAgent(80)
+    result = agent.get_direction(None, 381, 300, 440)
+    assert result == -1
+
+    result = agent.get_direction(None, 382, 310, 361)
+    assert result == 0
+
+
+def test_get_direction_remove_jitter_ball_upward():
+    agent = AdvancedAutomaticAgent(80)
+    agent.get_direction(None, 300, 300, 536)
+
+    result = agent.get_direction(None, 350, 250, 536)
+    assert result == 0
