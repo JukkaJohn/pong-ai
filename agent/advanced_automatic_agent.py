@@ -9,8 +9,9 @@ class AdvancedAutomaticAgent:
         self.ball_x_previous = -1
         self.ball_y_previous = -1
 
-    def get_direction(self, key_state, ball_x, ball_y, own_player_x) -> int:
+    def get_direction(self, key_state, ball_x, ball_y, own_player_x, opponent_x) -> int:
         result = None
+
         if self.ball_x_previous == -1 or ball_x == self.ball_x_previous:
             result = self.get_direction_based_on_ball_x(ball_x, own_player_x)
 

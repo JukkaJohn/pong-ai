@@ -1,3 +1,4 @@
 click
 pygame==2.0.0.dev4
 pytest
+torch

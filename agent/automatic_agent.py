@@ -5,7 +5,7 @@ class AutomaticAgent:
     def __init__(self, player_width):
         self.player_width = player_width
 
-    def get_direction(self, key_state, ball_x, ball_y, own_player_x) -> int:
+    def get_direction(self, key_state, ball_x, ball_y, own_player_x, opponent_x) -> int:
         if ball_x - self.get_middle_of_paddle(own_player_x) <= JITTER_MARGIN >= self.get_middle_of_paddle(
                 own_player_x) - ball_x:
             return 0
