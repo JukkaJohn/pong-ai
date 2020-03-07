@@ -4,8 +4,10 @@ JITTER_MARGIN = 15
 
 
 class AdvancedAutomaticAgent:
-    def __init__(self, player_width):
+    def __init__(self, player_width, player=1):
         self.player_width = player_width
+        self.player = player
+        self.player_y = 25 if player == 1 else 580
         self.ball_x_previous = -1
         self.ball_y_previous = -1
 
@@ -17,11 +19,11 @@ class AdvancedAutomaticAgent:
 
         if result is None:
 
-            if ball_y < self.ball_y_previous:
+            if self.ball_coming_towards_player(ball_y, self.ball_y_previous):
 
                 line_parameters = np.linalg.solve(np.array([[self.ball_x_previous, 1], [ball_x, 1]]),
                                                   np.array([self.ball_y_previous, ball_y]))
-                pred_x_intersection = (25 - line_parameters[1]) / line_parameters[0]
+                pred_x_intersection = (self.player_y - line_parameters[1]) / line_parameters[0]
                 while pred_x_intersection < 0 or pred_x_intersection > 800:
                     if pred_x_intersection > 800:
                         pred_x_intersection = 800 - (pred_x_intersection - 800)
@@ -37,6 +39,12 @@ class AdvancedAutomaticAgent:
         self.ball_y_previous = ball_y
 
         return result
+
+    def ball_coming_towards_player(self, current_ball_y, previous_ball_y):
+        if self.player == 1:
+            return current_ball_y < previous_ball_y
+        else:
+            return current_ball_y > previous_ball_y
 
     def get_middle_of_paddle(self, own_player_x) -> int:
         return own_player_x + self.player_width / 2

@@ -4,6 +4,7 @@ from agent.automatic_agent import AutomaticAgent
 from agent.human_agent import HumanAgent
 from agent.ai_agent import AiAgent
 from environment.pong import Pong, PLAYER_WIDTH, SCREEN_WIDTH, SCREEN_HEIGHT
+from training.trainer import train_model
 
 TWO_PLAYER = 'TWO_PLAYER'
 AUTOMATIC_PLAYER = 'AUTOMATIC_PLAYER'
@@ -30,16 +31,7 @@ def play(game_type):
 @cli.command()
 @click.option('--episodes', type=click.INT, default=100)
 def train(episodes):
-    exploration_rate = 1.0
-    agent = AiAgent(SCREEN_WIDTH, SCREEN_HEIGHT, exploration_rate=exploration_rate)
-
-    for i in range(episodes):
-        print(f'starting game {episodes}, exploration rate = {exploration_rate}')
-        pong = Pong(agent)
-        
-        done = False
-        while not done:
-            pass
+    train_model(episodes)
 
 
 def create_agent(game_type):
