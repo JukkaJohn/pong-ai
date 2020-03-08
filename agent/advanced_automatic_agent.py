@@ -1,5 +1,7 @@
 import numpy as np
 
+from environment.pong import STAY, LEFT, RIGHT
+
 JITTER_MARGIN = 15
 
 
@@ -52,8 +54,8 @@ class AdvancedAutomaticAgent:
     def get_direction_based_on_ball_x(self, ball_x, own_player_x):
         if ball_x - self.get_middle_of_paddle(own_player_x) <= JITTER_MARGIN >= self.get_middle_of_paddle(
                 own_player_x) - ball_x:
-            return 0
+            return STAY
         if ball_x < own_player_x + self.player_width / 2:
-            return -1
+            return LEFT
         else:
-            return 1
+            return RIGHT

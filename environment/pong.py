@@ -1,3 +1,5 @@
+from collections import namedtuple
+
 import pygame
 from ball.ball import Ball
 from player.player import Player
@@ -7,6 +9,12 @@ WHITE = (255, 255, 255)
 PLAYER_WIDTH = 75
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
+
+LEFT = 0
+STAY = 1
+RIGHT = 2
+
+Positions = namedtuple('Positions', ('ball_x', 'ball_y', 'opponent_x', 'own_player_x'))
 
 
 class Pong:
@@ -66,11 +74,11 @@ class Pong:
 
         pygame.quit()
 
-    def step(self, action_player_1, action_player_2) -> (bool, tuple):
+    def step(self, action_player_1, action_player_2) -> (bool, tuple, float):
         self.screen.fill(BLACK)
 
-        self.player1.update(action_player_1)
-        self.player2.update(action_player_2)
+        self.player1.update(action_player_1 - 1)
+        self.player2.update(action_player_2 - 1)
         self.ball.update()
 
         reward = 0
@@ -84,12 +92,14 @@ class Pong:
             self.ball.reset()
 
         if pygame.sprite.spritecollide(self.player1, self.balls, False):
+            reward = 0.1
             diff = (self.player1.rect.x + self.player1.width / 2) - (self.ball.rect.x + self.ball.width / 2)
 
             self.ball.y = 570
             self.ball.bounce(diff)
 
         if pygame.sprite.spritecollide(self.player2, self.balls, False):
+            reward = -0.05
             diff = (self.player2.rect.x + self.player2.width / 2) - (self.ball.rect.x + self.ball.width / 2)
 
             self.ball.y = 40
@@ -114,4 +124,4 @@ class Pong:
         done = False
         if self.score1 == self.end_score or self.score2 == self.end_score:
             done = True
-        return done, (self.ball.x, self.ball.y, self.player1.rect.x, self.player2.rect.x), reward
+        return done, Positions(self.ball.x, self.ball.y, self.player1.rect.x, self.player2.rect.x), reward

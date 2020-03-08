@@ -4,7 +4,7 @@ from agent.automatic_agent import AutomaticAgent
 from agent.human_agent import HumanAgent
 from agent.ai_agent import AiAgent
 from environment.pong import Pong, PLAYER_WIDTH, SCREEN_WIDTH, SCREEN_HEIGHT
-from training.trainer import train_model
+from training.model_trainer import ModelTrainer
 
 TWO_PLAYER = 'TWO_PLAYER'
 AUTOMATIC_PLAYER = 'AUTOMATIC_PLAYER'
@@ -31,7 +31,8 @@ def play(game_type):
 @cli.command()
 @click.option('--episodes', type=click.INT, default=100)
 def train(episodes):
-    train_model(episodes)
+    model_trainer = ModelTrainer(episodes)
+    model_trainer.train_model()
 
 
 def create_agent(game_type):
