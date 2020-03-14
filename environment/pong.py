@@ -64,13 +64,14 @@ class Pong:
                 key_state = pygame.key.get_pressed()
                 action_player_2 = self.agent.get_direction(key_state, self.ball.x, self.ball.y, self.player2.rect.x,
                                                            self.player1.rect.x)
-                done, _, _ = self.step(key_state[pygame.K_RIGHT] - key_state[pygame.K_LEFT], action_player_2)
+                done, _, _ = self.step(key_state[pygame.K_RIGHT] - key_state[pygame.K_LEFT] + 1, action_player_2)
 
             if done:
                 text = self.font.render("Game Over", 1, (200, 200, 200))
                 textpos = text.get_rect(centerx=self.background.get_width() / 2)
                 textpos.top = 50
                 self.screen.blit(text, textpos)
+                exit_program = True
 
         pygame.quit()
 
@@ -83,23 +84,23 @@ class Pong:
 
         reward = 0
         if self.ball.y < 0:
-            reward = -1
+            reward = -10
             self.score1 += 1
             self.ball.reset()
         elif self.ball.y > 600:
-            reward = 1
+            reward = 10
             self.score2 += 1
             self.ball.reset()
 
         if pygame.sprite.spritecollide(self.player1, self.balls, False):
-            reward = 0.1
+            reward = -0.5
             diff = (self.player1.rect.x + self.player1.width / 2) - (self.ball.rect.x + self.ball.width / 2)
 
             self.ball.y = 570
             self.ball.bounce(diff)
 
         if pygame.sprite.spritecollide(self.player2, self.balls, False):
-            reward = -0.05
+            reward = 1
             diff = (self.player2.rect.x + self.player2.width / 2) - (self.ball.rect.x + self.ball.width / 2)
 
             self.ball.y = 40
