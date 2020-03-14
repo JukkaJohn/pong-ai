@@ -7,7 +7,7 @@ import torch.nn.functional as F
 from agent.advanced_automatic_agent import AdvancedAutomaticAgent
 from agent.ai_agent import AiAgent
 from environment.pong import SCREEN_WIDTH, SCREEN_HEIGHT, Pong, PLAYER_WIDTH, Positions
-from nn.net import Net
+from nn.net import Net2Hidden, get_model_input
 from training.replay_memory import ReplayMemory, Transition
 from utils.running_average import RunningAverage
 
@@ -20,27 +20,19 @@ TARGET_UPDATE = 10
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
-def get_model_input(ball_x, ball_y, ball_x_previous, ball_y_previous, own_player_x, opponent_x) -> torch.Tensor:
-    velocity_ball_x = ball_x - ball_x_previous
-    velocity_ball_y = ball_y - ball_y_previous
-    return torch.Tensor([ball_x / SCREEN_WIDTH, ball_y / SCREEN_HEIGHT, own_player_x / SCREEN_WIDTH,
-                         opponent_x / SCREEN_WIDTH, velocity_ball_x / SCREEN_WIDTH,
-                         velocity_ball_y / SCREEN_HEIGHT])
-
-
 class ModelTrainer:
     def __init__(self, episodes: int, learning_rate: int, model_save_dir: str):
         self.episodes = episodes
         self.lr = learning_rate
         self.model_save_dir = model_save_dir
-        self.policy_network = Net()
-        self.target_network = Net()
+        self.policy_network = Net2Hidden(6, 256, 256, 3)
+        self.target_network = Net2Hidden(6, 256, 256, 3)
         self.target_network.load_state_dict(self.policy_network.state_dict())
         self.target_network.eval()
         # self.optimizer = optim.RMSprop(self.policy_network.parameters())
         self.optimizer = optim.Adam(self.policy_network.parameters(), lr=self.lr)
         self.epsilon_threshold = EPSILON_START
-        self.player_1 = AdvancedAutomaticAgent(PLAYER_WIDTH, 580)
+        self.player_1 = AdvancedAutomaticAgent(PLAYER_WIDTH, 580, exploration_rate=0.4)
         self.agent = AiAgent(SCREEN_WIDTH, SCREEN_HEIGHT, self.policy_network, epsilon_threshold=self.epsilon_threshold)
         self.replay_memory = ReplayMemory(MAX_MEMORY_SIZE)
         self.reward_avg = RunningAverage(window_size=1000)

@@ -3,6 +3,7 @@ import random
 import torch
 
 from environment.pong import STAY, LEFT, RIGHT
+from nn.net import get_model_input
 
 JITTER_MARGIN = 15
 
@@ -24,17 +25,11 @@ class AiAgent:
 
         if random.random() > self.epsilon_threshold:
             with torch.no_grad():
-                result = self.policy_network(self.get_model_input(ball_x, ball_y, own_player_x, opponent_x)).max(0)[
-                    1].item()
+                result = self.policy_network(
+                    get_model_input(ball_x, ball_y, self.ball_x_previous, self.ball_y_previous, own_player_x,
+                                    opponent_x)).max(0)[1].item()
         else:
             result = random.choice([LEFT, STAY, RIGHT])
         self.ball_x_previous = ball_x
         self.ball_y_previous = ball_y
         return result
-
-    def get_model_input(self, ball_x, ball_y, own_player_x, opponent_x) -> torch.Tensor:
-        velocity_ball_x = ball_x - self.ball_x_previous
-        velocity_ball_y = ball_y - self.ball_y_previous
-        return torch.Tensor([ball_x / self.screen_width, ball_y / self.screen_height, own_player_x / self.screen_width,
-                             opponent_x / self.screen_width, velocity_ball_x / self.screen_width,
-                             velocity_ball_y / self.screen_height])

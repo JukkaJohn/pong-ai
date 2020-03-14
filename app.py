@@ -6,7 +6,7 @@ from agent.automatic_agent import AutomaticAgent
 from agent.human_agent import HumanAgent
 from agent.ai_agent import AiAgent
 from environment.pong import Pong, PLAYER_WIDTH, SCREEN_WIDTH, SCREEN_HEIGHT
-from nn.net import Net
+from nn.net import Net2Hidden
 from training.model_trainer import ModelTrainer
 
 TWO_PLAYER = 'TWO_PLAYER'
@@ -34,7 +34,7 @@ def play(game_type):
 @cli.command()
 @click.option('--episodes', type=click.INT, default=100)
 @click.option('--learning-rate', type=click.FLOAT, default=0.003)
-@click.option('--model-save-dir', type=click.Path(exists=True))
+@click.option('--model-save-dir', type=click.Path(exists=True), required=True)
 def train(episodes, learning_rate, model_save_dir):
     model_trainer = ModelTrainer(episodes, learning_rate, model_save_dir)
     model_trainer.train_model()
@@ -46,7 +46,7 @@ def create_agent(game_type):
     elif game_type == ADVANCED_AUTOMATIC_PLAYER:
         return AdvancedAutomaticAgent(PLAYER_WIDTH)
     elif game_type == AI_PLAYER:
-        model = Net()
+        model = Net2Hidden(6, 256, 256, 3)
         model.load_state_dict(torch.load('models/pong.pth'))
         model.eval()
         return AiAgent(SCREEN_WIDTH, SCREEN_HEIGHT, policy_network=model, epsilon_threshold=0.0)
