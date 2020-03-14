@@ -6,15 +6,10 @@ class RunningAverage:
 
     def push(self, metric: float):
         self.metrics.append(metric)
+        if len(self.metrics) > self.window_size:
+            self.metrics = self.metrics[-self.window_size:]
 
-    metric = input(20)
-    n = int(metric)
-    average = 0
-    sum = 0
-    for num in range(0, n + 1, 1):
-        sum = sum + num
-    average = sum / n
-
-
-def average(self):
-    pass
+    def average(self):
+        if not self.metrics:
+            return 0
+        return sum(self.metrics) / len(self.metrics)
