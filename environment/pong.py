@@ -40,12 +40,12 @@ class Pong:
         self.balls = pygame.sprite.Group()
         self.balls.add(self.ball)
 
-        self.player1 = Player(580, PLAYER_WIDTH, WHITE)
-        self.player2 = Player(25, PLAYER_WIDTH, WHITE)
+        self.player_bottom = Player(580, PLAYER_WIDTH, WHITE)
+        self.player_top = Player(25, PLAYER_WIDTH, WHITE)
 
         self.movingsprites = pygame.sprite.Group()
-        self.movingsprites.add(self.player1)
-        self.movingsprites.add(self.player2)
+        self.movingsprites.add(self.player_bottom)
+        self.movingsprites.add(self.player_top)
         self.movingsprites.add(self.ball)
         self.clock = pygame.time.Clock()
 
@@ -62,8 +62,8 @@ class Pong:
 
             if not done:
                 key_state = pygame.key.get_pressed()
-                action_player_2 = self.agent.get_direction(key_state, self.ball.x, self.ball.y, self.player2.rect.x,
-                                                           self.player1.rect.x)
+                action_player_2 = self.agent.get_direction(key_state, self.ball.x, self.ball.y, self.player_top.rect.x,
+                                                           self.player_bottom.rect.x)
                 done, _, _ = self.step(key_state[pygame.K_RIGHT] - key_state[pygame.K_LEFT] + 1, action_player_2)
 
             if done:
@@ -75,11 +75,11 @@ class Pong:
 
         pygame.quit()
 
-    def step(self, action_player_1, action_player_2) -> (bool, tuple, float):
+    def step(self, action_player_bottom, action_player_top) -> (bool, tuple, float):
         self.screen.fill(BLACK)
 
-        self.player1.update(action_player_1 - 1)
-        self.player2.update(action_player_2 - 1)
+        self.player_bottom.update(action_player_bottom - 1)
+        self.player_top.update(action_player_top - 1)
         self.ball.update()
 
         reward = 0
@@ -92,16 +92,16 @@ class Pong:
             self.score2 += 1
             self.ball.reset()
 
-        if pygame.sprite.spritecollide(self.player1, self.balls, False):
+        if pygame.sprite.spritecollide(self.player_bottom, self.balls, False):
             reward = -0.5
-            diff = (self.player1.rect.x + self.player1.width / 2) - (self.ball.rect.x + self.ball.width / 2)
+            diff = (self.player_bottom.rect.x + self.player_bottom.width / 2) - (self.ball.rect.x + self.ball.width / 2)
 
             self.ball.y = 570
             self.ball.bounce(diff)
 
-        if pygame.sprite.spritecollide(self.player2, self.balls, False):
+        if pygame.sprite.spritecollide(self.player_top, self.balls, False):
             reward = 1
-            diff = (self.player2.rect.x + self.player2.width / 2) - (self.ball.rect.x + self.ball.width / 2)
+            diff = (self.player_top.rect.x + self.player_top.width / 2) - (self.ball.rect.x + self.ball.width / 2)
 
             self.ball.y = 40
             self.ball.bounce(diff)
@@ -125,4 +125,4 @@ class Pong:
         done = False
         if self.score1 == self.end_score or self.score2 == self.end_score:
             done = True
-        return done, Positions(self.ball.x, self.ball.y, self.player1.rect.x, self.player2.rect.x), reward
+        return done, Positions(self.ball.x, self.ball.y, self.player_bottom.rect.x, self.player_top.rect.x), reward

@@ -7,7 +7,7 @@ import torch.nn.functional as F
 from agent.advanced_automatic_agent import AdvancedAutomaticAgent
 from agent.ai_agent import AiAgent
 from environment.pong import SCREEN_WIDTH, SCREEN_HEIGHT, Pong, PLAYER_WIDTH, Positions
-from nn.net import Net
+from nn.net import Net1Hidden
 from training.replay_memory import ReplayMemory, Transition
 from utils.running_average import RunningAverage
 
@@ -33,8 +33,8 @@ class ModelTrainer:
         self.episodes = episodes
         self.lr = learning_rate
         self.model_save_dir = model_save_dir
-        self.policy_network = Net()
-        self.target_network = Net()
+        self.policy_network = Net1Hidden()
+        self.target_network = Net1Hidden()
         self.target_network.load_state_dict(self.policy_network.state_dict())
         self.target_network.eval()
         # self.optimizer = optim.RMSprop(self.policy_network.parameters())
@@ -55,12 +55,12 @@ class ModelTrainer:
             pong = Pong(self.agent, end_score=2)
 
             done = False
-            current_positions = Positions(pong.ball.x, pong.ball.y, pong.player1.rect.x, pong.player2.rect.x)
-            current_state = get_model_input(pong.ball.x, pong.ball.y, pong.ball.x, pong.ball.y, pong.player2.rect.x,
-                                            pong.player1.rect.x)
+            current_positions = Positions(pong.ball.x, pong.ball.y, pong.player_bottom.rect.x, pong.player_top.rect.x)
+            current_state = get_model_input(pong.ball.x, pong.ball.y, pong.ball.x, pong.ball.y, pong.player_top.rect.x,
+                                            pong.player_bottom.rect.x)
             while not done:
-                opponent_action = self.player_1.get_direction(None, pong.ball.x, pong.ball.y, pong.player1.rect.x,
-                                                              pong.player2.rect.x)
+                opponent_action = self.player_1.get_direction(None, pong.ball.x, pong.ball.y, pong.player_bottom.rect.x,
+                                                              pong.player_top.rect.x)
                 agent_action = self.agent.get_direction(None, *current_positions)
                 done, new_positions, reward = pong.step(opponent_action, agent_action)
                 agent_action = torch.tensor([agent_action], device=device, dtype=torch.long)
@@ -122,7 +122,7 @@ class ModelTrainer:
         # Optimize the model
         self.optimizer.zero_grad()
         loss.backward()
-        for param in self.policy_network.parameters():
-            param.grad.data.clamp_(-1, 1)
-        self.optimizer.step()
+        # for param in self.policy_network.parameters():
+        #     param.grad.data.clamp_(-1, 1)
+        # self.optimizer.step()
         return loss.item()
