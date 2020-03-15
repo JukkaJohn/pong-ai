@@ -32,7 +32,7 @@ class ModelTrainer:
         # self.optimizer = optim.RMSprop(self.policy_network.parameters())
         self.optimizer = optim.Adam(self.policy_network.parameters(), lr=self.lr)
         self.epsilon_threshold = EPSILON_START
-        self.player_1 = AdvancedAutomaticAgent(PLAYER_WIDTH, 580, exploration_rate=0.4)
+        self.player_1 = AdvancedAutomaticAgent(PLAYER_WIDTH, player=2, exploration_rate=0.4)
         self.agent = AiAgent(SCREEN_WIDTH, SCREEN_HEIGHT, self.policy_network, epsilon_threshold=self.epsilon_threshold)
         self.replay_memory = ReplayMemory(MAX_MEMORY_SIZE)
         self.reward_avg = RunningAverage(window_size=1000)

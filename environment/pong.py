@@ -125,4 +125,5 @@ class Pong:
         done = False
         if self.score1 == self.end_score or self.score2 == self.end_score:
             done = True
+            pygame.quit()
         return done, Positions(self.ball.x, self.ball.y, self.player_bottom.rect.x, self.player_top.rect.x), reward

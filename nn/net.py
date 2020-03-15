@@ -33,11 +33,10 @@ class Net2Hidden(nn.Module):
         return actions
 
 
-def get_model_input(ball_x, ball_y, ball_x_previous, ball_y_previous, own_player_x, opponent_x) -> torch.Tensor:
-    return torch.Tensor(
-        [ball_x / SCREEN_WIDTH,
-         ball_y / SCREEN_HEIGHT,
-         ball_x_previous / SCREEN_WIDTH,
-         ball_y_previous / SCREEN_HEIGHT,
-         own_player_x / SCREEN_WIDTH,
-         opponent_x / SCREEN_WIDTH])
+def get_model_input(ball_x, ball_y, ball_x_previous, ball_y_previous, own_player_x, opponent_x) -> list:
+    return [ball_x / SCREEN_WIDTH,
+            ball_y / SCREEN_HEIGHT,
+            ball_x_previous / SCREEN_WIDTH,
+            ball_y_previous / SCREEN_HEIGHT,
+            own_player_x / SCREEN_WIDTH,
+            opponent_x / SCREEN_WIDTH]
