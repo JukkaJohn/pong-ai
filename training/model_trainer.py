@@ -7,7 +7,7 @@ import torch.nn.functional as F
 from agent.advanced_automatic_agent import AdvancedAutomaticAgent
 from agent.ai_agent import AiAgent
 from environment.pong import SCREEN_WIDTH, SCREEN_HEIGHT, Pong, PLAYER_WIDTH, Positions
-from nn.net import Net1Hidden
+from nn.net import Net1Hidden, get_model_input
 from training.replay_memory import ReplayMemory, Transition
 from utils.running_average import RunningAverage
 
