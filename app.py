@@ -34,7 +34,7 @@ def play(game_type):
 @cli.command()
 @click.option('--episodes', type=click.INT, default=100)
 @click.option('--learning-rate', type=click.FLOAT, default=0.003)
-@click.option('--model-save-dir', type=click.Path(exists=True))
+@click.option('--model-save-dir', type=click.Path(exists=True), required=True)
 def train(episodes, learning_rate, model_save_dir):
     model_trainer = ModelTrainer(episodes, learning_rate, model_save_dir)
     model_trainer.train_model()

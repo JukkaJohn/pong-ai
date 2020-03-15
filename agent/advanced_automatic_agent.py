@@ -1,3 +1,5 @@
+import random
+
 import numpy as np
 
 from environment.pong import STAY, LEFT, RIGHT
@@ -6,7 +8,8 @@ JITTER_MARGIN = 15
 
 
 class AdvancedAutomaticAgent:
-    def __init__(self, player_width, player=1):
+    def __init__(self, player_width, player=1, exploration_rate=0.0):
+        self.exploration_rate = exploration_rate
         self.player_width = player_width
         self.player = player
         self.player_y = 25 if player == 1 else 580
@@ -15,27 +18,30 @@ class AdvancedAutomaticAgent:
 
     def get_direction(self, key_state, ball_x, ball_y, own_player_x, opponent_x) -> int:
         result = None
+        if random.random() > self.exploration_rate:
 
-        if self.ball_x_previous == -1 or ball_x == self.ball_x_previous:
-            result = self.get_direction_based_on_ball_x(ball_x, own_player_x)
+            if self.ball_x_previous == -1 or ball_x == self.ball_x_previous:
+                result = self.get_direction_based_on_ball_x(ball_x, own_player_x)
 
-        if result is None:
+            if result is None:
 
-            if self.ball_coming_towards_player(ball_y, self.ball_y_previous):
+                if self.ball_coming_towards_player(ball_y, self.ball_y_previous):
 
-                line_parameters = np.linalg.solve(np.array([[self.ball_x_previous, 1], [ball_x, 1]]),
-                                                  np.array([self.ball_y_previous, ball_y]))
-                pred_x_intersection = (self.player_y - line_parameters[1]) / line_parameters[0]
-                while pred_x_intersection < 0 or pred_x_intersection > 800:
-                    if pred_x_intersection > 800:
-                        pred_x_intersection = 800 - (pred_x_intersection - 800)
+                    line_parameters = np.linalg.solve(np.array([[self.ball_x_previous, 1], [ball_x, 1]]),
+                                                      np.array([self.ball_y_previous, ball_y]))
+                    pred_x_intersection = (self.player_y - line_parameters[1]) / line_parameters[0]
+                    while pred_x_intersection < 0 or pred_x_intersection > 800:
+                        if pred_x_intersection > 800:
+                            pred_x_intersection = 800 - (pred_x_intersection - 800)
 
-                    if pred_x_intersection < 0:
-                        pred_x_intersection = -pred_x_intersection
+                        if pred_x_intersection < 0:
+                            pred_x_intersection = -pred_x_intersection
 
-                result = self.get_direction_based_on_ball_x(pred_x_intersection, own_player_x)
-            else:
-                result = self.get_direction_based_on_ball_x(400, own_player_x)
+                    result = self.get_direction_based_on_ball_x(pred_x_intersection, own_player_x)
+                else:
+                    result = self.get_direction_based_on_ball_x(400, own_player_x)
+        else:
+            result = random.choice([LEFT, STAY, RIGHT])
 
         self.ball_x_previous = ball_x
         self.ball_y_previous = ball_y
