@@ -7,7 +7,7 @@ from player.player import Player
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 PLAYER_WIDTH = 75
-SCREEN_WIDTH = 800
+SCREEN_WIDTH = 400
 SCREEN_HEIGHT = 600
 
 LEFT = 0
@@ -36,7 +36,7 @@ class Pong:
 
         self.background = pygame.Surface(self.screen.get_size())
 
-        self.ball = Ball(WHITE)
+        self.ball = Ball(WHITE, SCREEN_WIDTH)
         self.balls = pygame.sprite.Group()
         self.balls.add(self.ball)
 
@@ -84,23 +84,23 @@ class Pong:
 
         reward = 0
         if self.ball.y < 0:
-            reward = -10
+            reward = -1
             self.score1 += 1
             self.ball.reset()
-        elif self.ball.y > 600:
-            reward = 10
+        elif self.ball.y > SCREEN_HEIGHT:
+            reward = 1
             self.score2 += 1
             self.ball.reset()
 
         if pygame.sprite.spritecollide(self.player_bottom, self.balls, False):
-            reward = -0.5
+            reward = 0
             diff = (self.player_bottom.rect.x + self.player_bottom.width / 2) - (self.ball.rect.x + self.ball.width / 2)
 
             self.ball.y = 570
             self.ball.bounce(diff)
 
         if pygame.sprite.spritecollide(self.player_top, self.balls, False):
-            reward = 1
+            reward = 10
             diff = (self.player_top.rect.x + self.player_top.width / 2) - (self.ball.rect.x + self.ball.width / 2)
 
             self.ball.y = 40
@@ -113,7 +113,7 @@ class Pong:
 
         scoreprint = "Player 2: " + str(self.score2)
         text = self.font.render(scoreprint, 1, WHITE)
-        textpos = (300, 0)
+        textpos = (SCREEN_WIDTH / 2 - 100, 0)
         self.screen.blit(text, textpos)
 
         self.movingsprites.draw(self.screen)
@@ -125,5 +125,4 @@ class Pong:
         done = False
         if self.score1 == self.end_score or self.score2 == self.end_score:
             done = True
-            pygame.quit()
         return done, Positions(self.ball.x, self.ball.y, self.player_bottom.rect.x, self.player_top.rect.x), reward

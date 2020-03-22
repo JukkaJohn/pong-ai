@@ -4,7 +4,7 @@ JITTER_MARGIN = 15
 
 
 class AutomaticAgent:
-    def __init__(self, player_width):
+    def __init__(self, player_width, player=1):
         self.player_width = player_width
 
     def get_direction(self, key_state, ball_x, ball_y, own_player_x, opponent_x) -> int:

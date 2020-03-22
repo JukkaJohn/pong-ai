@@ -1,5 +1,5 @@
 import gym
-from phil.simple_dqn_torch import DeepQNetwork, Agent
+from phil_dqn.simple_dqn_torch import DeepQNetwork, Agent
 from utils.plot_learning import plotLearning
 import numpy as np
 from gym import wrappers
@@ -7,7 +7,7 @@ from gym import wrappers
 if __name__ == '__main__':
     env = gym.make('LunarLander-v2')
     brain = Agent(gamma=0.99, epsilon=1.0, batch_size=64, n_actions=4,
-                  input_dims=[8], alpha=0.003)
+                  input_dims=8, alpha=0.003)
 
     scores = []
     eps_history = []
@@ -36,6 +36,9 @@ if __name__ == '__main__':
                                   done)
             observation = observation_
             brain.learn()
+
+        brain.EPSILON = brain.EPSILON * brain.EPS_DEC if brain.EPSILON > \
+                                                         brain.EPS_MIN else brain.EPS_MIN
 
         scores.append(score)
 

@@ -1,17 +1,15 @@
-import gym
-
 from agent.advanced_automatic_agent import AdvancedAutomaticAgent
+from agent.automatic_agent import AutomaticAgent
 from environment.pong import Pong, PLAYER_WIDTH, Positions
 from nn.net import get_model_input
-from phil.simple_dqn_torch import DeepQNetwork, Agent
+from phil_dqn.simple_dqn_torch import Agent
 from utils.plot_learning import plotLearning
 import numpy as np
-from gym import wrappers
 
 if __name__ == '__main__':
     brain = Agent(gamma=0.99, epsilon=1.0, batch_size=64, n_actions=3,
                   input_dims=6, alpha=0.003)
-    opponent = AdvancedAutomaticAgent(PLAYER_WIDTH, player=2, exploration_rate=0.4)
+    opponent = AutomaticAgent(PLAYER_WIDTH)
 
     scores = []
     losses = []
@@ -19,10 +17,6 @@ if __name__ == '__main__':
     num_games = 500
     score = 0
     loss = 0
-    end_score = 3
-    # uncomment the line below to record every episode.
-    # env = wrappers.Monitor(env, "tmp/space-invaders-1",
-    # video_callable=lambda episode_id: True, force=True)
     for i in range(num_games):
         if i % 10 == 0 and i > 0:
             avg_score = np.mean(scores[max(0, i - 10):(i + 1)])
@@ -33,7 +27,7 @@ if __name__ == '__main__':
                   'epsilon %.3f' % brain.EPSILON)
         else:
             print(f'episode: {i}, score: {score}, loss: {loss}')
-        pong = Pong(brain, end_score=end_score)
+        pong = Pong(brain, end_score=3)
         eps_history.append(brain.EPSILON)
         done = False
         positions = Positions(pong.ball.x, pong.ball.y, pong.player_bottom.rect.x, pong.player_top.rect.x)
@@ -53,6 +47,9 @@ if __name__ == '__main__':
             observation = observation_
             positions = positions_
             loss += brain.learn()
+
+        brain.EPSILON = brain.EPSILON * brain.EPS_DEC if brain.EPSILON > \
+                                                         brain.EPS_MIN else brain.EPS_MIN
 
         scores.append(score)
         losses.append(loss)

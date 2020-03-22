@@ -5,11 +5,12 @@ import pygame
 
 
 class Ball(pygame.sprite.Sprite):
-    def __init__(self, color):
+    def __init__(self, color, screen_width):
         # Call the parent class (Sprite) constructor
         super().__init__()
 
         # Create the image of the ball
+        self.screen_width = screen_width
         self.image = pygame.Surface([10, 10])
 
         # Color the ball
@@ -40,7 +41,7 @@ class Ball(pygame.sprite.Sprite):
         self.reset()
 
     def reset(self):
-        self.x = random.randrange(50, 750)
+        self.x = random.randrange(50, self.screen_width - 50)
         self.y = 350.0
         self.speed = 8.0
 
@@ -57,6 +58,18 @@ class Ball(pygame.sprite.Sprite):
     def bounce(self, diff):
         self.direction = (180 - self.direction) % 360
         self.direction -= diff
+
+        if 75 < self.direction < 105:
+            if self.direction > 90:
+                self.direction = 105
+            else:
+                self.direction = 75
+
+        if 255 < self.direction < 285:
+            if self.direction > 270:
+                self.direction = 285
+            else:
+                self.direction = 255
 
         # Speed the ball up
         self.speed *= 1.1

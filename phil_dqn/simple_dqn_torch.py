@@ -100,9 +100,6 @@ class Agent(object):
             q_target[batch_index, action_indices] = reward_batch + \
                                                     self.GAMMA * T.max(q_next, dim=1)[0] * terminal_batch
 
-            self.EPSILON = self.EPSILON * self.EPS_DEC if self.EPSILON > \
-                                                          self.EPS_MIN else self.EPS_MIN
-
             loss = self.Q_eval.loss(q_target, q_eval).to(self.Q_eval.device)
             loss.backward()
             self.Q_eval.optimizer.step()

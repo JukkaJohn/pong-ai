@@ -2,7 +2,7 @@ import random
 
 import numpy as np
 
-from environment.pong import STAY, LEFT, RIGHT
+from environment.pong import STAY, LEFT, RIGHT, SCREEN_WIDTH
 
 JITTER_MARGIN = 15
 
@@ -30,16 +30,16 @@ class AdvancedAutomaticAgent:
                     line_parameters = np.linalg.solve(np.array([[self.ball_x_previous, 1], [ball_x, 1]]),
                                                       np.array([self.ball_y_previous, ball_y]))
                     pred_x_intersection = (self.player_y - line_parameters[1]) / line_parameters[0]
-                    while pred_x_intersection < 0 or pred_x_intersection > 800:
-                        if pred_x_intersection > 800:
-                            pred_x_intersection = 800 - (pred_x_intersection - 800)
+                    while pred_x_intersection < 0 or pred_x_intersection > SCREEN_WIDTH:
+                        if pred_x_intersection > SCREEN_WIDTH:
+                            pred_x_intersection = SCREEN_WIDTH - (pred_x_intersection - SCREEN_WIDTH)
 
                         if pred_x_intersection < 0:
                             pred_x_intersection = -pred_x_intersection
 
                     result = self.get_direction_based_on_ball_x(pred_x_intersection, own_player_x)
                 else:
-                    result = self.get_direction_based_on_ball_x(400, own_player_x)
+                    result = self.get_direction_based_on_ball_x(SCREEN_WIDTH / 2, own_player_x)
         else:
             result = random.choice([LEFT, STAY, RIGHT])
 
